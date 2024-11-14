@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR/VR Scene</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v6.1.1/dist/aframe-extras.min.js"></script>
+</head>
+<body>
+<a-scene>
+    <!-- Площина -->
+    <a-plane position="0 0 -5" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+
+    <!-- Геометричні примітиви -->
+    <a-box position="-2 1 -5" color="#4CC3D9" animation="property: position; to: 2 3 -5; dur: 2000; loop: true"
+           animation__color="property: color; to: #FF6347; dur: 2000; loop: true"></a-box>
+    <a-sphere position="0 1 -6" radius="1.25" color="#EF2D5E"></a-sphere>
+    <a-cylinder position="2 1 -5" radius="0.5" height="2" color="#FFC65D"></a-cylinder>
+
+    <!-- Модель з GLTF -->
+    <!-- <a-assets>
+        <a-asset-item id="model" response-type ="arraybuffer" src="../lab4/model/Soldier.glb"></a-asset-item>
+    </a-assets>
+    <a-entity gltf-model="#model" position="0 0 -3" rotation="0 180 0" animation-mixer="clip: Idle; loop: repeat;"></a-entity>-->
+    <a-gltf-model id="soldier" src="model/Soldier.glb" position="0 0 -3" rotation="0 180 0"  animation-mixer="clip: Walk;"></a-gltf-model>
+
+    <!-- Світло -->
+    <a-light type="ambient" color="#fff" intensity="0.5" position="0 2 0"></a-light>
+
+    <!-- Three.js об'єкт -->
+    <a-entity id="threejs-object" position="0 2 -3" rotation="-90 0 0"></a-entity>
+</a-scene>
+<script>
+    document.querySelector('#soldier').addEventListener('model-loaded', function (event) {
+        console.log('Модель завантажена:', event.target);
+        const animations = event.target.components['gltf-model'].model.animations;
+        if (animations && animations.length > 0) {
+            console.log('Анімації в моделі:', animations);
+        } else {
+            console.log('Модель не містить анімацій');
+        }
+    });
+
+    //Геометричний примiтив, що створений як Three.js об’єкт.
+    const threeJsEntity = document.querySelector('#threejs-object');
+
+    const geometry = new AFRAME.THREE.TorusGeometry(0.2, 0.03, 16, 100);
+    /*const material = new AFRAME.THREE.MeshStandardMaterial({color: 0xffff00});*/
+    const material = new AFRAME.THREE.MeshBasicMaterial({color: 0xffff00,});
+    const torus = new AFRAME.THREE.Mesh(geometry, material);
+
+    // Додаємо об'єкт Three.js у сцену A-Frame
+    threeJsEntity.object3D.add(torus);
+</script>
+</body>
+</html>
